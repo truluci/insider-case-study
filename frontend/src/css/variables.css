@@ -1,8 +1,28 @@
 :root {
+  /* Colors */
   --color-primary: #B57EDC;
   --color-bg: #B57EDC;
   --color-text: #000000;
-  --color-white: #ffffff;
+  --color-transparent: transparent;
+  
+  /* Borders */
   --border-width: 2px;
   --border-color: #000000;
+  
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+  --spacing-xxl: 40px;
+  
+  /* Typography */
+  --font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  --font-weight-bold: 700;
+  --font-size-sm: 0.9rem;
+  --font-size-base: 1rem;
+  --font-size-md: 1.1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.5rem;
 }

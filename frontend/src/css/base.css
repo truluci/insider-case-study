@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  font-family: var(--font-family);
   background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
@@ -17,5 +17,5 @@ h1, h2, h3, p {
 }
 
 h1, h2, h3 {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }

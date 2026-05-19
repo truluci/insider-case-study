@@ -3,19 +3,19 @@
   display: flex;
   flex-wrap: wrap;
   border-bottom: var(--border-width) solid var(--border-color);
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-xl);
 }
 
 .tab-btn {
-  padding: 15px 30px;
-  background-color: transparent;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--color-transparent);
   border: none;
   border-top: var(--border-width) solid var(--border-color);
   border-right: var(--border-width) solid var(--border-color);
   color: var(--color-text);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: var(--font-size-md);
 }
 
 .tabs .tab-btn:first-child {
@@ -29,18 +29,18 @@
 /* Forms */
 .team-form, .match-form, .prediction-form {
   display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
   flex-wrap: wrap;
 }
 
 input, select {
-  padding: 12px;
+  padding: var(--spacing-md);
   border: var(--border-width) solid var(--border-color);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   color: var(--color-text);
-  background-color: transparent;
+  background-color: var(--color-transparent);
 }
 
 input:focus, select:focus {
@@ -50,16 +50,16 @@ input:focus, select:focus {
 
 /* Buttons */
 .btn {
-  padding: 12px 24px;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: var(--border-width) solid var(--border-color);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
   color: var(--color-text);
 }
 
 .btn-primary, .btn-success, .btn-info, .btn-danger {
-  background-color: transparent;
+  background-color: var(--color-transparent);
 }
 
 .btn-primary:hover, .btn-success:hover, .btn-info:hover, .btn-danger:hover {
@@ -73,7 +73,7 @@ input:focus, select:focus {
 
 /* Warning text */
 .warning-text {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   display: flex;
   align-items: center;
 }
@@ -82,58 +82,58 @@ input:focus, select:focus {
 .teams-grid, .matches-list, .predictions-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 .team-card, .match-card, .prediction-card {
   border: var(--border-width) solid var(--border-color);
-  padding: 20px;
-  background-color: transparent;
+  padding: var(--spacing-lg);
+  background-color: var(--color-transparent);
 }
 
 .team-card h3 {
-  margin-bottom: 5px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .team-card p {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
 }
 
 .match-header {
   border-bottom: var(--border-width) solid var(--border-color);
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-  font-weight: 700;
-  font-size: 1.2rem;
+  padding-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
 }
 
 .match-body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-md);
 }
 
 .team {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .score {
-  font-weight: 700;
-  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
 }
 
 .vs {
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .match-status {
-  padding: 8px;
+  padding: var(--spacing-sm);
   border: var(--border-width) solid var(--border-color);
   text-align: center;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  background-color: transparent;
+  background-color: var(--color-transparent);
 }
 
 .match-status.completed {
@@ -142,9 +142,9 @@ input:focus, select:focus {
 
 .no-matches {
   border: var(--border-width) dashed var(--border-color);
-  padding: 40px;
+  padding: var(--spacing-xxl);
   text-align: center;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 /* Controls */
@@ -152,14 +152,14 @@ input:focus, select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
   flex-wrap: wrap;
-  gap: 15px;
+  gap: var(--spacing-md);
 }
 
 .week-controls {
   display: flex;
-  gap: 10px;
+  gap: var(--spacing-sm);
 }
 
 /* Table */
@@ -170,9 +170,9 @@ input:focus, select:focus {
 
 .league-table th, .league-table td {
   border: var(--border-width) solid var(--border-color);
-  padding: 12px;
+  padding: var(--spacing-md);
   text-align: left;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .league-table th {
@@ -188,7 +188,7 @@ input:focus, select:focus {
 }
 
 .points {
-  font-size: 1.2rem;
+  font-size: var(--font-size-lg);
 }
 
 /* Prediction Badges */
@@ -201,8 +201,8 @@ input:focus, select:focus {
 .position-badge {
   background-color: var(--color-primary);
   border: var(--border-width) solid var(--border-color);
-  padding: 5px 15px;
-  font-weight: 700;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-weight: var(--font-weight-bold);
 }
 
 @media (max-width: 768px) {
@@ -211,7 +211,7 @@ input:focus, select:focus {
   }
   .tab-btn {
     border: var(--border-width) solid var(--border-color);
-    margin-bottom: -var(--border-width);
+    margin-bottom: calc(var(--border-width) * -1);
   }
   .tabs .tab-btn:first-child {
     border-top: var(--border-width) solid var(--border-color);
