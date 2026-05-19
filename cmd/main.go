@@ -95,5 +95,8 @@ func setupRouter(h *handlers.Handler) http.Handler {
 	// Auto play endpoints
 	mux.HandleFunc("POST /api/play-all", h.PlayAllMatches)
 
+	// Simulation control endpoints
+	mux.HandleFunc("POST /api/restart", h.RestartSimulation)
+
 	return mux
 }

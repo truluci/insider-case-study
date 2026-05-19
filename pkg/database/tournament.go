@@ -4,15 +4,19 @@ import (
 	"fmt"
 )
 
-// ResetMatches deletes all existing matches and tournament state
+// ResetMatches deletes all existing matches, tournament state, stats, and predictions
 func (d *Database) ResetMatches() error {
-	_, err := d.conn.Exec("DELETE FROM matches")
-	if err != nil {
-		return fmt.Errorf("failed to reset matches: %w", err)
+	queries := []string{
+		"DELETE FROM matches",
+		"DELETE FROM tournament_state",
+		"DELETE FROM team_stats",
+		"DELETE FROM predictions",
 	}
-	_, err = d.conn.Exec("DELETE FROM tournament_state")
-	if err != nil {
-		return fmt.Errorf("failed to reset tournament state: %w", err)
+
+	for _, query := range queries {
+		if _, err := d.conn.Exec(query); err != nil {
+			return fmt.Errorf("failed to execute %s: %w", query, err)
+		}
 	}
 	return nil
 }

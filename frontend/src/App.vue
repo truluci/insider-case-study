@@ -3,6 +3,7 @@
     <header class="header">
       <h1>⚽ Football League Simulation</h1>
       <p>Premier League Style Tournament</p>
+      <button @click="restartSimulation" class="btn" style="background: #e53e3e; color: white; margin-top: 15px;">🔄 Restart Simulation</button>
     </header>
 
     <main class="main-content">
@@ -308,6 +309,24 @@ export default {
       }
     }
 
+    const restartSimulation = async () => {
+      if (!confirm('Are you sure you want to completely restart the simulation? All match results and predictions will be lost.')) {
+        return
+      }
+      try {
+        await axios.post(`${API_BASE}/restart`)
+        await fetchTournamentState()
+        await fetchMatches()
+        await fetchLeagueStats()
+        await fetchPredictions()
+        activeTab.value = 'Teams'
+        alert('Simulation has been restarted!')
+      } catch (error) {
+        console.error('Error restarting simulation:', error)
+        alert('Failed to restart simulation')
+      }
+    }
+
     const getTeamName = (teamId) => {
       const team = teams.value.find(t => t.id === teamId)
       return team ? team.name : 'Unknown'
@@ -339,7 +358,8 @@ export default {
       playWeekMatches,
       goNextWeek,
       addPrediction,
-      getTeamName
+      getTeamName,
+      restartSimulation
     }
   }
 }
