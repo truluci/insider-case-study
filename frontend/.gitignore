@@ -1,0 +1,18 @@
+.DS_Store
+node_modules/
+dist/
+*.local
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.project
+.classpath
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
