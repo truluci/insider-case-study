@@ -29,7 +29,8 @@ dev:
 	@echo "Backend starting on http://localhost:8080"
 	@echo "Frontend starting on http://localhost:3000"
 	@echo ""
-	go run ./cmd/main.go &
+	go build -o bin/main ./cmd
+	./bin/main &
 	cd frontend && npm run dev
 
 build:
