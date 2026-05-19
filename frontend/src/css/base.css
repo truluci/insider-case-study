@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p {
+  color: var(--color-text);
+}
+
+h1, h2, h3 {
+  font-weight: 900;
+}
