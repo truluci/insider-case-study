@@ -34,6 +34,7 @@
         :currentWeek="currentWeek"
         :totalWeeks="totalWeeks"
         @play-week="playWeekMatches"
+        @play-all="playAllWeeksMatches"
         @next-week="goNextWeek"
       />
 
@@ -158,12 +159,24 @@ export default {
 
     const playWeekMatches = async () => {
       try {
-        await axios.post(`${API_BASE}/play-all`)
+        await axios.post(`${API_BASE}/play-week`)
         await fetchMatches()
         await fetchLeagueStats()
       } catch (error) {
         console.error('Error playing matches:', error)
         alert('Failed to play matches')
+      }
+    }
+
+    const playAllWeeksMatches = async () => {
+      try {
+        await axios.post(`${API_BASE}/play-all`)
+        await fetchTournamentState()
+        await fetchMatches()
+        await fetchLeagueStats()
+      } catch (error) {
+        console.error('Error playing all matches:', error)
+        alert('Failed to play all matches')
       }
     }
 
@@ -235,6 +248,7 @@ export default {
       tournamentStarted,
       addTeam,
       playWeekMatches,
+      playAllWeeksMatches,
       goNextWeek,
       addPrediction,
       restartSimulation

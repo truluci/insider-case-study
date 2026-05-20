@@ -67,8 +67,8 @@ func (h *Handler) UpdateMatch(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Match updated", "id": id})
 }
 
-// PlayAllMatches handles POST /api/play-all
-func (h *Handler) PlayAllMatches(w http.ResponseWriter, r *http.Request) {
+// PlayWeekMatches handles POST /api/play-week
+func (h *Handler) PlayWeekMatches(w http.ResponseWriter, r *http.Request) {
 	currentWeek, err := h.db.GetCurrentWeek()
 	if err != nil {
 		http.Error(w, "Failed to get current week", http.StatusInternalServerError)
@@ -84,5 +84,24 @@ func (h *Handler) PlayAllMatches(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"message": fmt.Sprintf("Week %d matches played successfully", currentWeek),
 		"week":    currentWeek,
+	})
+}
+
+// PlayAllMatches handles POST /api/play-all
+func (h *Handler) PlayAllMatches(w http.ResponseWriter, r *http.Request) {
+	if err := h.matchService.PlayAllMatches(); err != nil {
+		http.Error(w, "Failed to play all matches", http.StatusInternalServerError)
+		return
+	}
+
+	totalWeeks, err := h.db.GetTotalWeeks()
+	if err == nil {
+		// Fast-forward tournament state to the end
+		h.db.GetConnection().Exec("UPDATE tournament_state SET current_week = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1", totalWeeks)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "All matches played successfully",
 	})
 }

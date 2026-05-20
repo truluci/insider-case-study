@@ -4,14 +4,11 @@
       <h2>Week {{ currentWeek }} of {{ totalWeeks }}</h2>
       <div class="week-controls">
         <button @click="$emit('play-week')" class="btn btn-success" :disabled="currentWeek > totalWeeks">Play Week {{ currentWeek }} Matches</button>
+        <button @click="$emit('play-all')" class="btn btn-primary" :disabled="currentWeek > totalWeeks">Play All Matches</button>
         <button @click="$emit('next-week')" class="btn btn-info" :disabled="currentWeek >= totalWeeks">Next Week →</button>
       </div>
     </div>
 
-    <div class="match-form">
-      <input type="text" placeholder="(Optional) Add custom matches" disabled class="input-disabled">
-      <p style="display: flex; align-items: center; font-size: 0.9rem; color: black; margin: 10px 0; font-weight: 700;">Week 1-{{ totalWeeks }} matches are pre-scheduled</p>
-    </div>
 
     <div class="matches-list">
       <div v-if="matches.filter(m => m.week === currentWeek).length === 0" class="no-matches">
@@ -40,7 +37,7 @@ export default {
     currentWeek: { type: Number, required: true },
     totalWeeks: { type: Number, required: true }
   },
-  emits: ['play-week', 'next-week'],
+  emits: ['play-week', 'play-all', 'next-week'],
   setup(props) {
     const getTeamName = (teamId) => {
       const team = props.teams.find(t => t.id === teamId)

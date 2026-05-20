@@ -27,7 +27,7 @@
 }
 
 /* Forms */
-.team-form, .match-form, .prediction-form {
+.team-form, .prediction-form {
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
@@ -91,6 +91,11 @@ input:focus, select:focus {
   background-color: var(--color-transparent);
 }
 
+.match-card {
+  display: flex;
+  flex-direction: column;
+}
+
 .team-card h3 {
   margin-bottom: var(--spacing-xs);
 }
@@ -116,11 +121,23 @@ input:focus, select:focus {
 
 .team {
   font-weight: var(--font-weight-bold);
+  flex: 1;
+}
+
+.team:first-child {
+  text-align: left;
+}
+
+.team:last-child {
+  text-align: right;
 }
 
 .score {
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-xl);
+  white-space: nowrap;
+  margin: 0 var(--spacing-sm);
+  text-align: center;
 }
 
 .vs {
@@ -134,6 +151,7 @@ input:focus, select:focus {
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   background-color: var(--color-transparent);
+  margin-top: auto;
 }
 
 .match-status.completed {

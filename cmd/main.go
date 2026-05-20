@@ -93,6 +93,7 @@ func setupRouter(h *handlers.Handler) http.Handler {
 	mux.HandleFunc("GET /api/predictions", h.GetPredictions)
 
 	// Auto play endpoints
+	mux.HandleFunc("POST /api/play-week", h.PlayWeekMatches)
 	mux.HandleFunc("POST /api/play-all", h.PlayAllMatches)
 
 	// Simulation control endpoints
