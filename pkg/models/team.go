@@ -25,6 +25,7 @@ type TeamStats struct {
 	GoalDiff      int       `json:"goal_diff"`
 	Points        int       `json:"points"`
 	Position      int       `json:"position"`
+	WinChance     string    `json:"win_chance"`
 	LastUpdatedAt time.Time `json:"last_updated_at"`
 }
 

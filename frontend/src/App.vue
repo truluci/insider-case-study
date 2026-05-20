@@ -47,6 +47,8 @@
         v-show="activeTab === 'Predictions'"
         :teams="teams"
         :predictions="predictions"
+        :correctPredictionIds="correctPredictionIds"
+        :arePredictionsLocked="arePredictionsLocked"
         @add-prediction="addPrediction"
       />
     </main>
@@ -54,7 +56,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import TeamsSection from './components/TeamsSection.vue'
 import MatchesSection from './components/MatchesSection.vue'
@@ -81,6 +83,10 @@ export default {
     const currentWeek = ref(1)
     const totalWeeks = ref(0)
     const tournamentStarted = ref(false)
+
+    const arePredictionsLocked = computed(() => {
+      return tournamentStarted.value || (matches.value && matches.value.some(m => m.status === 'completed'))
+    })
 
     const fetchTeams = async () => {
       try {
@@ -157,11 +163,46 @@ export default {
       }
     }
 
+    let hasAlertedPredictions = false;
+    const correctPredictionIds = ref([]);
+
+    const checkPredictions = () => {
+      if (!matches.value || matches.value.length === 0) return;
+      if (!predictions.value || predictions.value.length === 0) return;
+      const allCompleted = matches.value.every(m => m.status === 'completed');
+      if (!allCompleted) {
+        correctPredictionIds.value = [];
+        return;
+      }
+
+      const correctIds = [];
+      const correctMessages = [];
+      predictions.value.forEach(pred => {
+        const statIndex = leagueStats.value.findIndex(s => s.team_id === pred.team_id);
+        if (statIndex !== -1) {
+          const actualPosition = statIndex + 1;
+          if (actualPosition === pred.position) {
+            correctIds.push(pred.id);
+            const teamName = teams.value.find(t => t.id === pred.team_id)?.name || 'Team';
+            correctMessages.push(`You correctly predicted ${teamName} at position ${pred.position}!`);
+          }
+        }
+      });
+
+      correctPredictionIds.value = correctIds;
+
+      if (!hasAlertedPredictions && correctMessages.length > 0) {
+        alert("🎉 Congratulations!\n\n" + correctMessages.join('\n'));
+      }
+      hasAlertedPredictions = true;
+    }
+
     const playWeekMatches = async () => {
       try {
         await axios.post(`${API_BASE}/play-week`)
         await fetchMatches()
         await fetchLeagueStats()
+        checkPredictions()
       } catch (error) {
         console.error('Error playing matches:', error)
         alert('Failed to play matches')
@@ -174,6 +215,7 @@ export default {
         await fetchTournamentState()
         await fetchMatches()
         await fetchLeagueStats()
+        checkPredictions()
       } catch (error) {
         console.error('Error playing all matches:', error)
         alert('Failed to play all matches')
@@ -193,10 +235,23 @@ export default {
     }
 
     const addPrediction = async (predictionData) => {
+      if (arePredictionsLocked.value) {
+        alert('Cannot add predictions after the league has started!')
+        return
+      }
+
       if (!predictionData.teamId || !predictionData.position) {
         alert('Please fill all fields')
         return
       }
+
+      // Check if this exact prediction already exists
+      const exists = predictions.value.find(p => p.team_id === predictionData.teamId && p.position === predictionData.position)
+      if (exists) {
+        alert('This prediction already exists!')
+        return
+      }
+
       try {
         await axios.post(`${API_BASE}/predictions`, {
           week: 1,
@@ -221,6 +276,8 @@ export default {
         await fetchLeagueStats()
         await fetchPredictions()
         activeTab.value = 'Teams'
+        hasAlertedPredictions = false;
+        correctPredictionIds.value = [];
         alert('Simulation has been restarted!')
       } catch (error) {
         console.error('Error restarting simulation:', error)
@@ -243,6 +300,8 @@ export default {
       matches,
       leagueStats,
       predictions,
+      correctPredictionIds,
+      arePredictionsLocked,
       currentWeek,
       totalWeeks,
       tournamentStarted,

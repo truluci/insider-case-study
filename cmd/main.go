@@ -91,6 +91,7 @@ func setupRouter(h *handlers.Handler) http.Handler {
 
 	// Predictions endpoints
 	mux.HandleFunc("GET /api/predictions", h.GetPredictions)
+	mux.HandleFunc("POST /api/predictions", h.CreatePrediction)
 
 	// Auto play endpoints
 	mux.HandleFunc("POST /api/play-week", h.PlayWeekMatches)

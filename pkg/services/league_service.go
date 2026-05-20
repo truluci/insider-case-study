@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/luci/football-league/pkg/models"
@@ -90,9 +91,55 @@ func (s *LeagueService) GetCurrentStandings() ([]*models.TeamStats, error) {
 		return result[i].GoalDiff > result[j].GoalDiff
 	})
 
-	// Set positions
+	// Set positions and find stats
+	highestPoints := 0
+	allZeroPlayed := true
 	for i := range result {
 		result[i].Position = i + 1
+		if result[i].Played > 0 {
+			allZeroPlayed = false
+		}
+		if result[i].Points > highestPoints {
+			highestPoints = result[i].Points
+		}
+	}
+
+	totalTeams := len(result)
+	totalMatchesPerTeam := (totalTeams - 1) * 2
+
+	if allZeroPlayed {
+		for i := range result {
+			result[i].WinChance = "N"
+		}
+	} else {
+		weights := make([]float64, len(result))
+		var totalWeight float64 = 0
+
+		for i, stat := range result {
+			matchesLeft := totalMatchesPerTeam - stat.Played
+			maxPossiblePoints := stat.Points + (matchesLeft * 3)
+
+			if maxPossiblePoints < highestPoints {
+				weights[i] = 0
+			} else {
+				w := float64(stat.Points*2 + stat.GoalDiff)
+				if w < 0.1 {
+					w = 0.1
+				}
+				w = w * w
+				weights[i] = w
+				totalWeight += w
+			}
+		}
+
+		for i, stat := range result {
+			if weights[i] == 0 {
+				stat.WinChance = "0"
+			} else {
+				chance := int((weights[i] / totalWeight) * 100)
+				stat.WinChance = fmt.Sprintf("%d", chance)
+			}
+		}
 	}
 
 	return result, nil

@@ -14,6 +14,7 @@
           <th>GA</th>
           <th>GD</th>
           <th>Points</th>
+          <th>Win %</th>
         </tr>
       </thead>
       <tbody>
@@ -28,6 +29,7 @@
           <td>{{ stat.goals_against }}</td>
           <td>{{ stat.goal_diff }}</td>
           <td class="points"><strong>{{ stat.points }}</strong></td>
+          <td class="prediction-perc">{{ stat.win_chance === 'N' ? 'N' : '%' + stat.win_chance }}</td>
         </tr>
       </tbody>
     </table>
