@@ -17,9 +17,9 @@ func NewTeamRepository(db *sql.DB) models.TeamRepository {
 
 func (r *TeamRepository) Create(team *models.Team) (*models.Team, error) {
 	now := time.Now()
-	query := `INSERT INTO teams (name, strength, created_at, updated_at) VALUES (?, ?, ?, ?) RETURNING id`
+	query := `INSERT INTO teams (name, strength, is_default, created_at, updated_at) VALUES (?, ?, ?, ?, ?) RETURNING id`
 
-	err := r.db.QueryRow(query, team.Name, team.Strength, now, now).Scan(&team.ID)
+	err := r.db.QueryRow(query, team.Name, team.Strength, team.IsDefault, now, now).Scan(&team.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -30,10 +30,10 @@ func (r *TeamRepository) Create(team *models.Team) (*models.Team, error) {
 }
 
 func (r *TeamRepository) GetByID(id int) (*models.Team, error) {
-	query := `SELECT id, name, strength, created_at, updated_at FROM teams WHERE id = ?`
+	query := `SELECT id, name, strength, is_default, created_at, updated_at FROM teams WHERE id = ?`
 
 	team := &models.Team{}
-	err := r.db.QueryRow(query, id).Scan(&team.ID, &team.Name, &team.Strength, &team.CreatedAt, &team.UpdatedAt)
+	err := r.db.QueryRow(query, id).Scan(&team.ID, &team.Name, &team.Strength, &team.IsDefault, &team.CreatedAt, &team.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (r *TeamRepository) GetByID(id int) (*models.Team, error) {
 }
 
 func (r *TeamRepository) GetAll() ([]*models.Team, error) {
-	query := `SELECT id, name, strength, created_at, updated_at FROM teams ORDER BY name`
+	query := `SELECT id, name, strength, is_default, created_at, updated_at FROM teams ORDER BY id`
 
 	rows, err := r.db.Query(query)
 	if err != nil {
@@ -53,7 +53,7 @@ func (r *TeamRepository) GetAll() ([]*models.Team, error) {
 	teams := make([]*models.Team, 0)
 	for rows.Next() {
 		team := &models.Team{}
-		err := rows.Scan(&team.ID, &team.Name, &team.Strength, &team.CreatedAt, &team.UpdatedAt)
+		err := rows.Scan(&team.ID, &team.Name, &team.Strength, &team.IsDefault, &team.CreatedAt, &team.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}

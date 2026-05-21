@@ -40,6 +40,7 @@ func (d *Database) CreateTables() error {
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL UNIQUE,
 		strength INTEGER NOT NULL DEFAULT 50,
+		is_default BOOLEAN DEFAULT 0,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
@@ -95,6 +96,9 @@ func (d *Database) CreateTables() error {
 		return fmt.Errorf("failed to create tables: %w", err)
 	}
 
+	// Migration: add is_default column for existing databases (ignore error if it exists)
+	_, _ = d.conn.Exec("ALTER TABLE teams ADD COLUMN is_default BOOLEAN DEFAULT 0")
+
 	return nil
 }
 
@@ -123,7 +127,7 @@ func (d *Database) SeedDefaultTeams() error {
 		{"Liverpool", 82},
 	}
 
-	query := `INSERT INTO teams (name, strength) VALUES (?, ?)`
+	query := `INSERT INTO teams (name, strength, is_default) VALUES (?, ?, 1)`
 
 	for _, team := range teams {
 		_, err := d.conn.Exec(query, team.name, team.strength)

@@ -25,6 +25,8 @@
         :teams="teams"
         :tournamentStarted="tournamentStarted"
         @add-team="addTeam"
+        @update-team="updateTeam"
+        @delete-team="deleteTeam"
       />
 
       <MatchesSection
@@ -159,6 +161,43 @@ export default {
           tournamentStarted.value = true
         } else {
           alert('Failed to add team')
+        }
+      }
+    }
+
+    const updateTeam = async (teamData) => {
+      try {
+        await axios.put(`${API_BASE}/teams/${teamData.id}`, {
+          name: teamData.name,
+          strength: teamData.strength
+        })
+        await fetchTeams()
+        await fetchMatches()
+        await fetchLeagueStats()
+        await fetchPredictions()
+        alert('Team updated!')
+      } catch (error) {
+        console.error('Error updating team:', error)
+        alert(error.response?.data || 'Failed to update team')
+      }
+    }
+
+    const deleteTeam = async (teamId) => {
+      if (!confirm('Are you sure you want to delete this team?')) return
+      try {
+        await axios.delete(`${API_BASE}/teams/${teamId}`)
+        await fetchTeams()
+        await fetchTournamentState()
+        await fetchMatches()
+        await fetchLeagueStats()
+        alert('Team deleted and tournament rescheduled!')
+      } catch (error) {
+        console.error('Error deleting team:', error)
+        if (error.response?.status === 400) {
+          alert('Cannot delete teams after tournament has started')
+          tournamentStarted.value = true
+        } else {
+          alert(error.response?.data || 'Failed to delete team')
         }
       }
     }
@@ -306,6 +345,8 @@ export default {
       totalWeeks,
       tournamentStarted,
       addTeam,
+      updateTeam,
+      deleteTeam,
       playWeekMatches,
       playAllWeeksMatches,
       goNextWeek,

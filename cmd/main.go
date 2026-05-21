@@ -75,6 +75,8 @@ func setupRouter(h *handlers.Handler) http.Handler {
 	// Teams endpoints
 	mux.HandleFunc("GET /api/teams", h.GetTeams)
 	mux.HandleFunc("POST /api/teams", h.CreateTeam)
+	mux.HandleFunc("PUT /api/teams/{id}", h.UpdateTeam)
+	mux.HandleFunc("DELETE /api/teams/{id}", h.DeleteTeam)
 
 	// Matches endpoints
 	mux.HandleFunc("GET /api/matches", h.GetMatches)

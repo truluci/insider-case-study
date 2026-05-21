@@ -7,6 +7,7 @@ type Team struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`
 	Strength  int       `json:"strength"` // 1-100 scale for team strength
+	IsDefault bool      `json:"is_default"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
