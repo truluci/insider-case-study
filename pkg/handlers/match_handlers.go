@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 // GetMatches handles GET /api/matches
@@ -59,12 +60,35 @@ func (h *Handler) UpdateMatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ID'yi path'ten al
-	id := r.PathValue("id")
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid match ID", http.StatusBadRequest)
+		return
+	}
 
-	// Match'i update et
+	match, err := h.matchService.GetMatch(id)
+	if err != nil {
+		http.Error(w, "Match not found", http.StatusNotFound)
+		return
+	}
+
+	match.HomeGoals = req.HomeGoals
+	match.AwayGoals = req.AwayGoals
+	if req.Status != "" {
+		match.Status = req.Status
+	} else {
+		match.Status = "completed"
+	}
+
+	updatedMatch, err := h.matchService.UpdateMatch(match)
+	if err != nil {
+		http.Error(w, "Failed to update match", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"message": "Match updated", "id": id})
+	json.NewEncoder(w).Encode(updatedMatch)
 }
 
 // PlayWeekMatches handles POST /api/play-week

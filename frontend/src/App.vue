@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <div class="notifications-container">
+      <div v-for="notif in notifications" :key="notif.id" :class="['notification', notif.type]">
+        {{ notif.message }}
+      </div>
+    </div>
     <header class="header">
       <h1>Football League Simulation</h1>
       <p>Premier League Style Tournament</p>
@@ -38,6 +43,7 @@
         @play-week="playWeekMatches"
         @play-all="playAllWeeksMatches"
         @next-week="goNextWeek"
+        @update-match="updateMatchResult"
       />
 
       <LeagueTable
@@ -76,6 +82,16 @@ export default {
     PredictionsSection
   },
   setup() {
+    const notifications = ref([])
+    let notifId = 0
+    const showNotification = (message, type = 'info') => {
+      const id = notifId++
+      notifications.value.push({ id, message, type })
+      setTimeout(() => {
+        notifications.value = notifications.value.filter(n => n.id !== id)
+      }, 5000)
+    }
+
     const activeTab = ref('Teams')
     const tabs = ['Teams', 'Matches', 'League', 'Predictions']
     const teams = ref([])
@@ -141,7 +157,7 @@ export default {
 
     const addTeam = async (teamData) => {
       if (!teamData.name) {
-        alert('Please enter team name')
+        showNotification('Please enter team name', 'error')
         return
       }
       try {
@@ -153,14 +169,14 @@ export default {
         await fetchTournamentState()
         await fetchMatches()
         await fetchLeagueStats()
-        alert('Team added and tournament rescheduled!')
+        showNotification('Team added and tournament rescheduled!', 'success')
       } catch (error) {
         console.error('Error adding team:', error)
         if (error.response?.status === 400) {
-          alert('Cannot add teams after tournament has started')
+          showNotification('Cannot add teams after tournament has started', 'error')
           tournamentStarted.value = true
         } else {
-          alert('Failed to add team')
+          showNotification('Failed to add team', 'error')
         }
       }
     }
@@ -175,10 +191,10 @@ export default {
         await fetchMatches()
         await fetchLeagueStats()
         await fetchPredictions()
-        alert('Team updated!')
+        showNotification('Team updated!', 'success')
       } catch (error) {
         console.error('Error updating team:', error)
-        alert(error.response?.data || 'Failed to update team')
+        showNotification(error.response?.data || 'Failed to update team', 'error')
       }
     }
 
@@ -190,15 +206,32 @@ export default {
         await fetchTournamentState()
         await fetchMatches()
         await fetchLeagueStats()
-        alert('Team deleted and tournament rescheduled!')
+        showNotification('Team deleted and tournament rescheduled!', 'success')
       } catch (error) {
         console.error('Error deleting team:', error)
         if (error.response?.status === 400) {
-          alert('Cannot delete teams after tournament has started')
+          showNotification('Cannot delete teams after tournament has started', 'error')
           tournamentStarted.value = true
         } else {
-          alert(error.response?.data || 'Failed to delete team')
+          showNotification(error.response?.data || 'Failed to delete team', 'error')
         }
+      }
+    }
+
+    const updateMatchResult = async (matchData) => {
+      try {
+        await axios.put(`${API_BASE}/matches/${matchData.id}`, {
+          home_goals: matchData.homeGoals,
+          away_goals: matchData.awayGoals,
+          status: 'completed'
+        })
+        await fetchMatches()
+        await fetchLeagueStats()
+        checkPredictions()
+        showNotification('Match result updated successfully', 'success')
+      } catch (error) {
+        console.error('Error updating match result:', error)
+        showNotification(error.response?.data || 'Failed to update match result', 'error')
       }
     }
 
@@ -231,7 +264,7 @@ export default {
       correctPredictionIds.value = correctIds;
 
       if (!hasAlertedPredictions && correctMessages.length > 0) {
-        alert("🎉 Congratulations!\n\n" + correctMessages.join('\n'));
+        showNotification("🎉 Congratulations!\n\n" + correctMessages.join('\n'), 'success');
       }
       hasAlertedPredictions = true;
     }
@@ -244,7 +277,7 @@ export default {
         checkPredictions()
       } catch (error) {
         console.error('Error playing matches:', error)
-        alert('Failed to play matches')
+        showNotification('Failed to play matches', 'error')
       }
     }
 
@@ -257,7 +290,7 @@ export default {
         checkPredictions()
       } catch (error) {
         console.error('Error playing all matches:', error)
-        alert('Failed to play all matches')
+        showNotification('Failed to play all matches', 'error')
       }
     }
 
@@ -269,25 +302,25 @@ export default {
         await fetchLeagueStats()
       } catch (error) {
         console.error('Error advancing week:', error)
-        alert('Cannot advance to next week')
+        showNotification('Cannot advance to next week', 'error')
       }
     }
 
     const addPrediction = async (predictionData) => {
       if (arePredictionsLocked.value) {
-        alert('Cannot add predictions after the league has started!')
+        showNotification('Cannot add predictions after the league has started!', 'error')
         return
       }
 
       if (!predictionData.teamId || !predictionData.position) {
-        alert('Please fill all fields')
+        showNotification('Please fill all fields', 'error')
         return
       }
 
       // Check if this exact prediction already exists
       const exists = predictions.value.find(p => p.team_id === predictionData.teamId && p.position === predictionData.position)
       if (exists) {
-        alert('This prediction already exists!')
+        showNotification('This prediction already exists!', 'error')
         return
       }
 
@@ -300,7 +333,7 @@ export default {
         await fetchPredictions()
       } catch (error) {
         console.error('Error adding prediction:', error)
-        alert('Failed to add prediction')
+        showNotification('Failed to add prediction', 'error')
       }
     }
 
@@ -317,10 +350,10 @@ export default {
         activeTab.value = 'Teams'
         hasAlertedPredictions = false;
         correctPredictionIds.value = [];
-        alert('Simulation has been restarted!')
+        showNotification('Simulation has been restarted!', 'success')
       } catch (error) {
         console.error('Error restarting simulation:', error)
-        alert('Failed to restart simulation')
+        showNotification('Failed to restart simulation', 'error')
       }
     }
 
@@ -333,6 +366,7 @@ export default {
     })
 
     return {
+      notifications,
       activeTab,
       tabs,
       teams,
@@ -350,6 +384,7 @@ export default {
       playWeekMatches,
       playAllWeeksMatches,
       goNextWeek,
+      updateMatchResult,
       addPrediction,
       restartSimulation
     }
