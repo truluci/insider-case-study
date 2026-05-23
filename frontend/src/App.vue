@@ -71,7 +71,7 @@ import MatchesSection from './components/MatchesSection.vue'
 import LeagueTable from './components/LeagueTable.vue'
 import PredictionsSection from './components/PredictionsSection.vue'
 
-const API_BASE = '/api'
+const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
 export default {
   name: 'App',
