@@ -72,6 +72,11 @@ func main() {
 func setupRouter(h *handlers.Handler) http.Handler {
 	mux := http.NewServeMux()
 
+	// Root endpoint for testing
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Insider Case Study Backend is running!"))
+	})
+
 	// Teams endpoints
 	mux.HandleFunc("GET /api/teams", h.GetTeams)
 	mux.HandleFunc("POST /api/teams", h.CreateTeam)
@@ -102,5 +107,20 @@ func setupRouter(h *handlers.Handler) http.Handler {
 	// Simulation control endpoints
 	mux.HandleFunc("POST /api/restart", h.RestartSimulation)
 
-	return mux
+	return corsMiddleware(mux)
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow requests from Vercel
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
