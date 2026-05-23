@@ -73,7 +73,7 @@ func setupRouter(h *handlers.Handler) http.Handler {
 	mux := http.NewServeMux()
 
 	// Root endpoint for testing
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Insider Case Study Backend is running!"))
 	})
 
