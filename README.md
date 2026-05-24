@@ -30,6 +30,8 @@ The application will be available at:
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8080
 
+**Note for deployed version:** The backend is deployed on Render and the frontend on Vercel — when opening the site from Vercel it may take a few moments to connect to the backend; please refresh the page a couple of times to ensure it becomes fully functional.
+
 ### Manual Setup
 If you don't have `make` installed:
 
